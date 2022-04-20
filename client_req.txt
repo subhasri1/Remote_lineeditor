@@ -1,0 +1,43 @@
+RLET_10         Client side program starting: The user should start the client                                              Mandatory
+                program to connect the Server whenever he wants.
+
+
+RLET_11         Client Side Connection request: Client should request a                                                     Mandatory
+                connection to server on port 8021.
+
+
+RLET_12         Client Side Authentication: Client program should start with an                                             Mandatory
+                authentication (default to anonymous).
+
+
+RLET_13         Client Side User Environment: On successful authentication the                                              Mandatory                       
+                user should placed on his home directory as PWD & anonymous
+                user PWD should be /var/edit
+
+
+RLET_14         Client Side Environment Customization: User can use cd to                                                   Optional
+                change his remote PWD on client side.
+
+
+RLET_15         Client Side Browsing: User can use ls to browse the file list in                                            Mandatory                                       
+                the remote PWD.
+
+
+RLET_16         Client Side File Selection: user must use select FILENAME sub                                               Mandatory
+                command to select a file for editing.
+
+
+RLET_17         Client side File Printing: user must use print [START] [END]                                                Mandatory
+                sub command to print a part or the whole file with line number.
+
+
+RLET_18         Client Side line Selection: user must use the edit LINENUM sub                                              Mandatory
+                command to get the content of the line to edit.
+
+
+RLET_18         Client Side line editing: User must press enter after changes to                                            Mandatory
+                accept the editing and save it to the file.
+
+
+RLET_19         Client Side Quit: The user should use a sub command bye to                                                  Mandatory
+                terminate the Connection.

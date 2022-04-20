@@ -1,0 +1,44 @@
+Functional Requirement: Remote Line Editor for Text Files Requirement
+
+Tag             Requirement Description                                                                                     Comments
+
+RLET_01         Client Server Connection: A connection between                                                              Mandatory
+                client and server must be established first.                                                                
+
+
+RLET_02         User Authentication: The server should authenticate the user                                                Mandatory
+                from a poll of registered user data kept with appropriate data structure.                                   
+
+
+RLET_03         Server Handshaking: The user should get the customize message                                               Optional
+                from server entering the user id but before providing the
+                password by which the user get conformation that it got
+                connected to the proper server.                                                                             
+
+
+RLET_04         Server side Firewall Protection: The server should listen to port                                           Mandatory
+                8012 for client connection and make the client side computer
+                access the server port.
+
+
+RLET_05         Server side Security: Before allowing a client connection the                                               Optional
+                server should match the client IP with the blacklist IP specified
+                in /etc/edit/client_blacklist .
+
+
+RLET_06         Service Starting at Boot: The server must configure to start the                                            Mandatory
+                service automatically at boot.
+
+
+RLET_07         Anonymous user access: Server should support an virtual user                                                Mandatory
+                with name anonymous to access all files in server’s /var/edit/
+                directory for editing without any password.
+
+
+RLET_08         Authenticated User Access: All the authenticated user should be                                             Mandatory
+                allowed to edit any files from their home directory.
+
+
+RLET_09         Server side Concurrency: The server should support the                                                      Mandatory
+                concurrent client connection.
+
