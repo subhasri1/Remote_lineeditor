@@ -23,7 +23,7 @@ int main()
     //initialize the socaddr_in structure
     struct sockaddr_in sock_addr_serv;// sockaddr_in for IPV4
     sock_addr_serv.sin_family = AF_INET;
-    sock_addr_serv.sin_port = 9988;
+    sock_addr_serv.sin_port = 8021;
     sock_addr_serv.sin_addr.s_addr = inet_addr("127.0.0.1");
 
     //bind the socket with ip address and port
