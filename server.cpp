@@ -1,75 +1,64 @@
 #include <iostream>
+#include <cstring>
+#include <cstdio>
+#include <cerrno>
 #include <sys/types.h>
-#include <sys/socket.h>
-#include <netinet/in.h>
-#include <arpa/inet.h>
-#include <unistd.h>
-#include <stdlib.h>
-#include <errno.h>
-using namespace std;
+#include <sys/socket.h>         // Core BSD socket functions and data structures.
+#include <netinet/in.h>         // AF_INET and AF_INET6 address families and their corresponding protocol families PF_INET and PF_INET6.
+#include <arpa/inet.h>          // Functions for manipulating numeric IP addresses.
+// #include <netinet/ip.h>
 
-// server receives a single character from the client('a') and it sends 'b' to client
+using namespace std;
+#define PORT 8000;
+
 int main()
 {
-
-    //socket creation
-    int serv_fd = socket(AF_INET,SOCK_STREAM,0);
-    if (serv_fd == -1)
+    system("clear");
+    int server_fd = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
+    if (server_fd == -1)
     {
-	    perror("socket creation error");
-	    exit(1);
+        perror("Socket Creation Failed...!\n");
+        exit(1);
     }
 
-    //initialize the socaddr_in structure
-    struct sockaddr_in sock_addr_serv;// sockaddr_in for IPV4
-    sock_addr_serv.sin_family = AF_INET;
-    sock_addr_serv.sin_port = 8021;
-    sock_addr_serv.sin_addr.s_addr = inet_addr("127.0.0.1");
-
-    //bind the socket with ip address and port
-    if (bind(serv_fd,(struct sockaddr *)&sock_addr_serv,sizeof(sock_addr_serv))==-1)
+    struct  sockaddr_in 
     {
-	    perror("bind error");
-	    exit(1);
-    }
-
-    // listening (waiting) for client request
-    if (listen(serv_fd,2)==-1)
+        server.sin_family = AF_INET;
+        server.sin_PORT = htons(PORT);
+        server.sin_addr.s_addr = inet_addr("127.0.0.1");
+    }server, client;
+    
+    int b = bind(server_fd, (struct sockaddr*)&servrer, sizeof(server));
+    if(b == -1)
     {
-	    perror("listen error");
-	    exit(1);
+        perror("Binding Failed...!");
+        exit(1);
     }
+    
+    listen(server_fd, 5);
 
+    int size = sizeof(struct sockaddr*)&client;
+    char snd[20], rcv[20];
     while (1)
     {
-	    cout << "server waiting for client to connect"  << endl;
-	
-	    //accepting client request
-	    struct sockaddr_in sock_addr_cli;
-	    socklen_t cli_len = sizeof(sock_addr_cli);
-	    int client_fd=accept(serv_fd,(struct sockaddr *)&sock_addr_cli,&cli_len);
-	    cout << "in server serv fd" << serv_fd << endl;
-	    cout << "in server client fd" << client_fd << endl;
-	    cout << "in server port (50) " << sock_addr_cli.sin_port << endl;
-	    cout << "in server ip " << sock_addr_cli.sin_addr.s_addr << endl;
- 
-	    if (client_fd==-1)
-	    {
-		    perror(" accept error");
-		    exit(1);
-	    }
-	    char ch;
-	    read(client_fd,&ch,1);
-	    cout << " from client : " << ch << endl;		
-	    ch++;
-	    write(client_fd,&ch,1);		
-	
+        int client_fd = accept(server_fd, (struct sockaddr*)&client, &size);
+        if(client_fd == -1)
+        {
+            perror("accept error\n");
+            exit(1);
+        }
+        cout<<"connection accepted"<<endl;
+        for(;;)
+        {
+            int r = recv(client_fd, rcv, sizeof(rcv), 0);
+            rcv[r] = '\0';
+            cout<<"MSG from client is : "<<rcv;
+            if(strcmp(rcv, "exit")==0)
+                break;
+            cout<<"Enter message to pass to client : ";
+            cin>>snd;
+            send(client_fd, snd, sizeof(snd), 0);
+        }
     }
-
-    //close socket
-    if (close(serv_fd)==-1)
-    {
-	    perror("socket close error");
-	    exit(1);
-    }
+    
 }
