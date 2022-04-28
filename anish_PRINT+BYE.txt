@@ -1,0 +1,51 @@
+/**************************   this is server part     *******************************************/
+
+
+                else if(!strcmp(command,"print"))
+			      	{
+			      	   char l1,l2;	
+			      	   recv(sock2,buf,100,0); 
+			      	   sscanf(buf,%c%c,l1,l2);
+			      	   stat(filename, &sfile);	
+			      	}
+			      	*/
+	
+      		     else if(!strcmp(command, "bye"))
+				{
+	  				//cout<<"Terminated"<<endl;
+	  				i = 1;
+	  				send(sock2, &i, sizeof(int), 0);
+	  				exit(0);
+				}
+
+
+
+
+
+
+/************************   this is client part        *****************************************/
+
+          
+		       /*case 6 :
+			    strcpy(buf,"print ");
+			    send(sock, buf, 100, 0);
+			    char l1,l2;
+			    cout<<"Enter the [start line no.] space [end line no.]:\n";
+			    cin>>l1>>l2;
+			    strcat(buf, l1+" ");
+			    strcat(buf, l2);
+			    send(sock, buf, 100, 0);
+			    break;
+			    */
+			case 7 :
+			  {
+			  	strcpy(buf, "bye");//for storing bye command in buffer 
+			  	send(sock, buf, 100, 0);//sending bye command to the server
+			  	recv(sock, &status, 100, 0);//client receives the termination status 
+			  	if(status)
+			    	{
+			      		cout<<"Terminated\n";
+			      		close(sock);
+			      		exit(0);
+			   	}
+			  }

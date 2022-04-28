@@ -1,0 +1,61 @@
+/************************    this is server part     **************************************************/
+
+      			if(!strcmp(command, "pwd"))
+				{
+	  				system("pwd>temp.txt");
+	  				i = 0;
+          				FILE*f = fopen("temp.txt","r");
+          				while(!feof(f))
+            				buf[i++] = fgetc(f);
+          				buf[i-1] = '\0';
+	  				fclose(f);
+          				send(sock2, buf, 100, 0);
+				}
+      			else if(!strcmp(command, "ls"))
+				{
+	  				system("ls > temp.txt");
+	  				i = 0;
+					stat("temp.txt",&sfile);//
+					size = sfile.st_size;
+					send(sock2, &size, sizeof(int),0);
+					filehandle = open("temp.txt", O_RDONLY);
+					sendfile(sock2,filehandle,NULL,size);//NULL- so that the client can edit the file
+				}
+				
+
+
+
+
+
+
+
+
+
+/***************************  this is client part  ******************************************************/
+
+
+			case 1:
+		  	{
+	  			strcpy(buf, "pwd");//pwd as a command string stored in buf
+	  			send(sock, buf, 100, 0); //pwd sent to the server
+	  			recv(sock, buf, 100, 0); //receiving the path from server
+	 			cout/*"The path of the remote directory is: %s\n"*/<<buf;
+	 			break;
+	  		}
+	  
+			case 2:
+	  		{
+	  			strcpy(buf, "ls"); //ls command stored in buf
+          			send(sock, buf, 100, 0); //ls sent to the server
+	  			recv(sock, &size, sizeof(int), 0);//size of all the files in pwd
+          			int *f = new int[size];//f = malloc(size);
+          			recv(sock, f, size, 0);//client receives all the files 
+	  			filehandle = creat("temp.txt", O_WRONLY);// creating a new file for storing all the file names to use in write function
+	  			write(filehandle, f, size);//all files present in f are stored in filehandle
+	  			close(filehandle);
+         			cout<<"The remote directory listing is as follows:\n";
+	  			system("cat temp.txt");// printing all the contents of temp.txt on terminal output
+	  			break;
+	  		}
+	  
+			case 3:
