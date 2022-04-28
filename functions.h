@@ -22,10 +22,8 @@ void listenForConnections(int anySocket);
 int acceptConnections(int anySocket, struct sockaddr_in anyAddress);
 //bool isBlacklist(int client_address);
 void connectToServerGate(int anySocket, struct sockaddr_in anyAddress);
-
-void registerUser();
-bool isUser();
-void checkDB();
+void userRegistration();
+void login();
 void menuFunction();
 void sighandler(int signum);
 void transact_with_server(int sock);
@@ -73,29 +71,26 @@ void listenForConnections(int anySocket)	// listen for connections from given so
 	}
 }
 
-/*
-bool isBlacklist(int client_fd)
+bool isBlacklist(int client_ip)
 {
-    int black_list_ip;
-    string client_address = client_fd.sin_addr.s_addr;
+    string black_list_ip;
     ifstream file;
-    file.open("/etc/edit/client_blacklist.txt");
+    file.open("etc/edit/client_blacklist.txt");
     if (file.is_open())
     {
         while(getline (file, black_list_ip))
         {
-            if (black_list_ip == client_address )
+            if (black_list_ip == client_ip)
+            {
+                file.close();
                 return true;
-            else
-                return false;
+            }
         }
         file.close();
+        return false;      
     }
-    else 
-        cout << "File cannot be read..!"<<endl;
 }
 
-*/
 
 int acceptConnections(int serverSocket, struct sockaddr_in sock_addr_cli)
 {
@@ -124,16 +119,16 @@ void connectToServerGate(int anySocket, struct sockaddr_in anyAddress)
 
 void menuFunction()
 {
-    cout << "Choose what to do:\n 1.Register\t 2.Login\t 3.Exit" << endl;
+    cout << "Press : \t 1.Register\t 2.Login\t 3.Exit" << endl;
     int option;
     cin >> option;
     if (option == 1)
     {
-        registerUser();
+        userRegistration();
     }
     else if (option == 2)
     {
-        checkDB();
+        login();
     }
     else if (option == 3)
     {
@@ -141,72 +136,82 @@ void menuFunction()
     }
     else
     {
-        cout << "Wrong decision";
+        cout << "Wrong choice";
         exit(0);
     }
 }
 
-void registerUser()
+void userRegistration()
 {
-	string username, password;
+	string username, password, usnm, pssd;
 	cout << "Enter Username : "; cin>>username;
 	cout << "Enter Password : "; cin>>password;
 	
 	ofstream file;
-	file.open("/etc/edit/userlist.txt", ios::app); // Append mode    O_APPEND
-	file << username << endl << password <<endl;
-	file.close();
-
-
-}
-
-
-bool isUser()
-{
-
-    string username, password, usnm, pssd;
-    cout << "Enter Username : "; cin>>username;
-    cout << "\nEnter Password : "; cin>>password;
-    
-    ifstream file;
-    file.open("/etc/edit/userlist.txt");
-    if (file.is_open())
+	file.open("etc/edit/userlist.txt");
+    while(file.is_open())
     {
         getline (file, usnm);
         getline (file, pssd);
-        file.close();
+        if(usnm != username)
+            cout<<"Invalid username\n";
+        else if(pssd != password)
+            cout<<"Invalid password\n";
+        else (usnm == username && pssd == password)
+        {
+            file.close();
+            file.open("etc/edit/userlist.txt", ios::app); // Append mode    O_APPEND
+            file << username << endl << password <<endl;
+            cout<<"User Registration sccessful....!"<<endl;
+	        file.close();
+        }   
     }
-    else 
-        cout << "File cannot be read..!"<<endl;
-
-    if (usnm == username && pssd == password)
-        return true;
-    else
-        return false;
 }
 
 
-void checkDB()
+void login()
 {
-    int loginAttempt=0, totalAttempt=5;
-    while(loginAttempt<5)
-    {
-        bool isavailable = isUser();
-        if(!isavailable)
-        {
-            cout << "Invalid login attempt. Please try again.\n" << '\n';
-            ++loginAttempt;
-            cout << "Attempt Left : " << totalAttempt-loginAttempt << endl;
-            if (loginAttempt == totalAttempt)
-            {
-                cout << "Too many login attempts.....! \nThank you for logging in.\n";
-                exit(0);
-            }
-        }
-        else
-            cout<<"Welcome you.."<<endl;
-            break;
 
+    string username, password, usnm, pssd;
+    int loginAttempt=0, totalAttempt=3;
+    ifstream file;
+    while(loginAttempt<totalAttempt)
+    {
+        cout << "Enter Username : "; cin>>username;
+        cout << "\nEnter Password : "; cin>>password;
+        file.open("etc/edit/userlist.txt");
+        while(file.is_open())
+        {
+            getline (file, usnm);
+            getline (file, pssd);
+            if(usnm != username)
+            {
+                cout<<"Invalid username\n";
+                ++loginAttempt;
+                cout << "Login attempt Left : " << totalAttempt-loginAttempt << endl;
+                file.close();
+                break;
+            }
+            else if(pssd != password)
+            {
+                cout<<"Invalid password\n";
+                ++loginAttempt;
+                cout << "Attempt Left : " << totalAttempt-loginAttempt << endl;
+                file.close();
+                break;
+            }
+            else (usnm == username && pssd == password)
+            {
+                cout<<"Welcome you.."<<endl;
+                file.close();
+                break;
+            }   
+        }
+        if (loginAttempt == totalAttempt)
+        {
+            cout << "Too many login attempts.....! \nThank you for logging in.\n";
+            exit(0);
+        }
     }
 }
 
@@ -233,14 +238,5 @@ void transact_with_client(int sock)
     send(sock,greet,strlen(greet), 0);  
     
 }
-
-
-//to avoid zombie process
-void sighandler(int signum)
-{
-    cout << strsignal(signum) << endl;
-    wait(NULL);
-}
-
 
     
