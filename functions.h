@@ -71,7 +71,7 @@ void listenForConnections(int anySocket)	// listen for connections from given so
 	}
 }
 
-bool isBlacklist(int client_ip)
+bool isBlacklist(string client_ip)
 {
     string black_list_ip;
     ifstream file;
