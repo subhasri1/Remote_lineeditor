@@ -161,7 +161,7 @@ void Change_Directory::change_directory_client(int sock)
 void Select_File::select_file_server(char *command, int sock)
 {
 	string str = "cat ";
-	str =str + command + " >temps.txt";
+	str =str + command + " >temps.txt"; //str= cat filename > temps.txt
 	if(system(str.c_str()) != 0)
 	{
 		send(sock, &i, sizeof(int),0);
@@ -178,6 +178,7 @@ void Select_File::select_file_server(char *command, int sock)
 			exit(1);
 		}
 		sendfile(sock, filehandle, NULL,size);
+		close(filehandle);
 		system("rm temps.txt");
 	}
 }

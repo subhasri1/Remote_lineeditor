@@ -1,6 +1,3 @@
-#ifndef HEADERS
-#define HEADERS
-
 #include <iostream>
 #include <cstdlib>
 #include <cerrno>
@@ -241,4 +238,3 @@ class Exit : public Commands
 };
 
 
-#endif
